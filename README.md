@@ -213,7 +213,9 @@ pnpm install   # runs `pnpm prepare` → installs Husky hooks
 This repo uses semantic-release to automate versioning and changelog generation based on Conventional Commits.
 
 - Conventional Commits: use `feat:`, `fix:`, `chore:`, optional scopes (e.g., `fix(download): ...`). Add `!` or a `BREAKING CHANGE:` footer for major releases.
-- Local dry-run: `pnpm release:dry` to preview the next version and notes.
+- Dry-run previews:
+  - `pnpm release:dry` — CI-like preview
+  - `pnpm release:dry:local` — local-only preview (avoids GitHub/network)
 - CI: On push to `main`, GitHub Actions runs `pnpm release` to create a tag, update `CHANGELOG.md` and `package.json`, and publish a GitHub Release (no npm publish).
 
 Pull requests run commit message checks to enforce the convention.

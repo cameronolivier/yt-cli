@@ -58,33 +58,9 @@ I will add a new script to `package.json` for running `semantic-release`:
 }
 ```
 
-### 2.4. Create a `.releaserc` file
+### 2.4. Use `release.config.cjs`
 
-I will create a `.releaserc` file to configure semantic-release.
-
-```json
-{
-  "branches": ["main"],
-  "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
-    [
-      "@semantic-release/npm",
-      {
-        "npmPublish": false
-      }
-    ],
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["package.json", "CHANGELOG.md"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ]
-  ]
-}
-```
+We configure semantic-release via `release.config.cjs` (committed). It mirrors the plugin setup above and conditionally excludes the GitHub plugin during local dry-runs (`LOCAL_DRY_RUN=1`).
 
 ### 2.5. Git and CI
 
@@ -92,8 +68,9 @@ I will assume that the user will be responsible for setting up the CI environmen
 
 ## 3. Verification
 
-After the changes are implemented, I will run `pnpm run release --dry-run` to verify that the configuration is correct and that `semantic-release` can determine the next version based on the commit history.
+Run either of:
 
-```
-
+```bash
+pnpm release:dry         # CI-like preview
+pnpm release:dry:local   # local preview without GitHub/network
 ```

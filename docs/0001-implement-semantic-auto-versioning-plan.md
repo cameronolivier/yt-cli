@@ -1,4 +1,4 @@
-status: no started
+status: done
 
 # 0001 — Implement Semantic Auto-Versioning (Plan)
 
@@ -19,7 +19,7 @@ Use `semantic-release` with plugins: commit analyzer, release notes generator, c
    - `"release": "semantic-release"`
    - `"release:dry": "semantic-release --dry-run"`
 
-3. Config (.releaserc or release.config.js)
+3. Config (release.config.cjs)
    - Branches: `main`
    - Plugins:
      - `@semantic-release/commit-analyzer` (default Angular preset)
@@ -29,27 +29,10 @@ Use `semantic-release` with plugins: commit analyzer, release notes generator, c
      - `["@semantic-release/git", { "assets": ["package.json", "CHANGELOG.md"], "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}" }]`
      - `@semantic-release/github` (create GitHub Release)
 
-Example `.releaserc`:
+Implemented via `release.config.cjs` (committed). It configures:
 
-```json
-{
-  "branches": ["main"],
-  "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
-    ["@semantic-release/npm", { "npmPublish": false }],
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["package.json", "CHANGELOG.md"],
-        "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
-      }
-    ],
-    "@semantic-release/github"
-  ]
-}
-```
+- Branch: `main`
+- Plugins: `@semantic-release/commit-analyzer`, `@semantic-release/release-notes-generator`, `@semantic-release/changelog`, `@semantic-release/npm` (no publish), `@semantic-release/git`, and `@semantic-release/github` (GitHub plugin excluded automatically during local dry-runs via `LOCAL_DRY_RUN=1`).
 
 4. CI (GitHub Actions)
    Create `.github/workflows/release.yml`:
@@ -92,3 +75,7 @@ jobs:
 - Non-conventional commits produce no release; enforce via PR checks if needed.
 - Ensure `fetch-depth: 0` so history is available.
 - We do not commit `dist/`; binaries are built in CI only.
+
+## Status
+
+- Implemented. Use `pnpm release:dry` for CI-like preview, or `pnpm release:dry:local` to run fully locally without GitHub/network calls.
