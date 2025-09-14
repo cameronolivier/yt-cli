@@ -58,14 +58,23 @@ yt "https://youtube.com/watch?v=VIDEO_ID"
 
 ### Advanced Options
 ```bash
-# Download to specific directory
+# Download audio only
+yt "https://youtube.com/watch?v=VIDEO_ID" -a
+
+# Download to a specific directory
 yt "https://youtube.com/watch?v=VIDEO_ID" -o ./my-videos
 
 # Download with specific quality
 yt "https://youtube.com/watch?v=VIDEO_ID" -q "720p"
 
-# Skip transcripts
-yt "https://youtube.com/watch?v=VIDEO_ID" --no-transcript
+# Disable transcripts for a video download
+yt "https://youtube.com/watch?v=VIDEO_ID" --transcript
+
+# Enable transcripts for an audio download
+yt "https://youtube.com/watch?v=VIDEO_ID" -a --transcript
+
+# Explicitly set transcript preference
+yt "https://youtube.com/watch?v=VIDEO_ID" --transcript=false
 
 # Skip compression
 yt "https://youtube.com/watch?v=VIDEO_ID" --no-compression
@@ -84,12 +93,28 @@ yt <url> [options]
 - `url` - YouTube video URL
 
 **Options:**
-- `-o, --output <dir>` - Output directory (default: "./downloads")
+- `-o, --output <dir>` - Output directory (default: ".")
 - `-q, --quality <quality>` - Video quality: "best", "worst", or specific format (default: "best")
-- `--no-transcript` - Skip downloading transcripts
-- `--no-compression` - Skip video compression
-- `--keep-original` - Keep original downloaded file after compression
-- `-h, --help` - Display help for command
+- `-t, --transcript [enabled]` - Control transcript download. See details below.
+- `-a, --audio-only` - Download audio only.
+- `--convert-subs` - Convert subtitles to plain text format (default: true).
+- `--no-compression` - Skip video compression.
+- `--keep-original` - Keep original downloaded file after compression.
+- `-h, --help` - Display help for command.
+
+### Transcript Flag Details
+
+The `--transcript` flag provides flexible control over downloading video transcripts.
+
+- **Default Behavior:**
+  - For **video** downloads, transcripts are **ON** by default.
+  - For **audio-only** downloads, transcripts are **OFF** by default.
+
+- **Overriding the Default:**
+  - Use the `--transcript` flag by itself to **REVERSE** the default behavior.
+    - `yt <url> --transcript` will turn transcripts **OFF** for a video.
+    - `yt <url> -a --transcript` will turn transcripts **ON** for audio.
+  - You can also explicitly set the value with `--transcript=true` or `--transcript=false`.
 
 ## How It Works
 

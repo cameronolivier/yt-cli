@@ -16,7 +16,7 @@ program
   .argument('<url>', 'YouTube video URL')
   .option('-o, --output <dir>', 'Output directory', '.')
   .option('-q, --quality <quality>', 'Video quality (best, worst, or specific format)', 'best')
-  .option('-t, --transcript [enabled]', 'Control transcript download. Flag reverses default (video=on, audio=off).')
+  .option('-t [enabled], --transcript [enabled]', 'Control transcript download. Flag reverses default (video=on, audio=off).')
   .option('-a, --audio-only', 'Download audio only')
   .option('--convert-subs', 'Convert subtitles to plain text format', true)
   .option('--no-compression', 'Skip video compression')
