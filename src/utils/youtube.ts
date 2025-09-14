@@ -122,7 +122,7 @@ export async function downloadVideo(url: string, options: DownloadOptions): Prom
   return new Promise((resolve, reject) => {
     const args = [
       '--ignore-config',
-      '--format', options.audioOnly ? 'bestaudio/best' : (options.quality === 'best' ? 'best[ext=mp4]/best' : options.quality),
+      '--format', options.audioOnly ? 'bestaudio/best' : (options.quality === 'best' ? 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' : options.quality),
       '--output', outputTemplate,
       '--embed-metadata',
       '--write-info-json',
