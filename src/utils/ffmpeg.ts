@@ -11,10 +11,10 @@ export interface CompressionOptions {
 
 export async function compressVideo(options: CompressionOptions): Promise<string> {
   const { inputFile, keepOriginal = false } = options;
-  
+
   // Generate output filename if not provided
   const outputFile = options.outputFile || generateCompressedFilename(inputFile);
-  
+
   // Check if input file exists
   try {
     await fs.access(inputFile);
@@ -28,29 +28,36 @@ export async function compressVideo(options: CompressionOptions): Promise<string
   return new Promise((resolve, reject) => {
     // FFmpeg arguments for lossless compression while maintaining quality
     const args = [
-      '-i', inputFile,
-      '-c:v', 'libx264',        // Use H.264 codec
-      '-crf', '18',             // Constant Rate Factor (18 is visually lossless)
-      '-preset', 'slow',        // Slower preset for better compression
-      '-c:a', 'aac',           // Use AAC for audio
-      '-b:a', '128k',          // Audio bitrate
-      '-movflags', '+faststart', // Optimize for web streaming
-      '-y',                    // Overwrite output file if exists
-      outputFile
+      '-i',
+      inputFile,
+      '-c:v',
+      'libx264', // Use H.264 codec
+      '-crf',
+      '18', // Constant Rate Factor (18 is visually lossless)
+      '-preset',
+      'slow', // Slower preset for better compression
+      '-c:a',
+      'aac', // Use AAC for audio
+      '-b:a',
+      '128k', // Audio bitrate
+      '-movflags',
+      '+faststart', // Optimize for web streaming
+      '-y', // Overwrite output file if exists
+      outputFile,
     ];
 
     const ffmpeg = spawn('ffmpeg', args);
 
     let stderr = '';
 
-    ffmpeg.stdout.on('data', (data) => {
+    ffmpeg.stdout.on('data', (_data) => {
       // FFmpeg outputs progress to stderr, not stdout
     });
 
     ffmpeg.stderr.on('data', (data) => {
       const text = data.toString();
       stderr += text;
-      
+
       // Parse progress information
       if (text.includes('frame=') || text.includes('time=')) {
         // Extract time information for progress
@@ -65,7 +72,7 @@ export async function compressVideo(options: CompressionOptions): Promise<string
 
     ffmpeg.on('close', async (code) => {
       process.stdout.write('\n'); // New line after progress output
-      
+
       if (code !== 0) {
         reject(new Error(`FFmpeg failed with code ${code}: ${stderr}`));
         return;
@@ -111,14 +118,16 @@ export async function getVideoInfo(filePath: string): Promise<{
   size: number;
 }> {
   const stats = await fs.stat(filePath);
-  
+
   return new Promise((resolve, reject) => {
     const ffprobe = spawn('ffprobe', [
-      '-v', 'quiet',
-      '-print_format', 'json',
+      '-v',
+      'quiet',
+      '-print_format',
+      'json',
       '-show_format',
       '-show_streams',
-      filePath
+      filePath,
     ]);
 
     let output = '';
@@ -140,8 +149,13 @@ export async function getVideoInfo(filePath: string): Promise<{
 
       try {
         const info = JSON.parse(output);
-        const videoStream = info.streams.find((stream: any) => stream.codec_type === 'video');
-        
+        const streams = info.streams as Array<{
+          codec_type?: string;
+          width?: number;
+          height?: number;
+        }>;
+        const videoStream = streams.find((stream) => stream.codec_type === 'video');
+
         if (!videoStream) {
           reject(new Error('No video stream found'));
           return;
@@ -151,7 +165,7 @@ export async function getVideoInfo(filePath: string): Promise<{
           duration: parseFloat(info.format.duration) || 0,
           width: videoStream.width || 0,
           height: videoStream.height || 0,
-          size: stats.size
+          size: stats.size,
         });
       } catch (e) {
         reject(new Error('Failed to parse video info'));

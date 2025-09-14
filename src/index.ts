@@ -16,7 +16,10 @@ program
   .argument('<url>', 'YouTube video URL')
   .option('-o, --output <dir>', 'Output directory', '.')
   .option('-q, --quality <quality>', 'Video quality (best, worst, or specific format)', 'best')
-  .option('-t [enabled], --transcript [enabled]', 'Control transcript download. Flag reverses default (video=on, audio=off).')
+  .option(
+    '-t [enabled], --transcript [enabled]',
+    'Control transcript download. Flag reverses default (video=on, audio=off).',
+  )
   .option('-a, --audio-only', 'Download audio only')
   .option('--convert-subs', 'Convert subtitles to plain text format', true)
   .option('--no-compression', 'Skip video compression')
@@ -35,22 +38,26 @@ program
     const defaultTranscript = !isAudioOnly; // true for video, false for audio
 
     if (transcriptOption === undefined) {
-        // Flag not present, use default
-        transcriptValue = defaultTranscript;
+      // Flag not present, use default
+      transcriptValue = defaultTranscript;
     } else if (transcriptOption === true) {
-        // Flag present without value, e.g., --transcript
-        transcriptValue = !defaultTranscript; // Reverse default
+      // Flag present without value, e.g., --transcript
+      transcriptValue = !defaultTranscript; // Reverse default
     } else {
-        // Flag present with value, e.g., --transcript=false
-        const lowerCaseOption = String(transcriptOption).toLowerCase();
-        if (lowerCaseOption === 'true') {
-            transcriptValue = true;
-        } else if (lowerCaseOption === 'false') {
-            transcriptValue = false;
-        } else {
-            console.error(chalk.red(`Error: Invalid value for --transcript: "${transcriptOption}". Must be "true" or "false".`));
-            process.exit(1);
-        }
+      // Flag present with value, e.g., --transcript=false
+      const lowerCaseOption = String(transcriptOption).toLowerCase();
+      if (lowerCaseOption === 'true') {
+        transcriptValue = true;
+      } else if (lowerCaseOption === 'false') {
+        transcriptValue = false;
+      } else {
+        console.error(
+          chalk.red(
+            `Error: Invalid value for --transcript: "${transcriptOption}". Must be "true" or "false".`,
+          ),
+        );
+        process.exit(1);
+      }
     }
 
     const finalOptions = { ...options, transcript: transcriptValue };
@@ -63,7 +70,9 @@ program
     }
   });
 
-program.addHelpText('after', `
+program.addHelpText(
+  'after',
+  `
 
 Transcript Flag Details:
   The --transcript flag controls transcript downloads.
@@ -77,13 +86,16 @@ Transcript Flag Details:
       e.g., for a video, 'yt <url> --transcript' will turn transcripts OFF.
       e.g., for audio, 'yt <url> -a --transcript' will turn transcripts ON.
     - Explicitly set the value with --transcript=true or --transcript=false.
-`);
+`,
+);
 
 // Handle unknown commands
 program.on('command:*', () => {
-  console.error(chalk.red('Invalid command: %s\nSee --help for a list of available commands.'), program.args.join(' '));
+  console.error(
+    chalk.red('Invalid command: %s\nSee --help for a list of available commands.'),
+    program.args.join(' '),
+  );
   process.exit(1);
 });
-
 
 program.parse(process.argv);

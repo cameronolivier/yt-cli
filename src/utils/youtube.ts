@@ -7,50 +7,55 @@ import chalk from 'chalk';
 async function convertVttToText(vttFilePath: string): Promise<string> {
   const vttContent = await fs.readFile(vttFilePath, 'utf-8');
   const txtFilePath = vttFilePath.replace(/\.vtt$/, '.txt');
-  
+
   // Parse VTT content and extract text
   const lines = vttContent.split('\n');
   const textLines: string[] = [];
   let afterTimestamp = false;
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    
+
     // Skip VTT headers and metadata
-    if (line === 'WEBVTT' || line.startsWith('NOTE ') || line.startsWith('Kind:') || line.startsWith('Language:')) {
+    if (
+      line === 'WEBVTT' ||
+      line.startsWith('NOTE ') ||
+      line.startsWith('Kind:') ||
+      line.startsWith('Language:')
+    ) {
       continue;
     }
-    
+
     // Check if this line contains a timestamp
     if (line.includes('-->')) {
       afterTimestamp = true;
       continue;
     }
-    
+
     // If we just passed a timestamp, the next non-empty lines are subtitle text
     if (afterTimestamp && line) {
       // Remove VTT timing tags like <00:00:01.000> and formatting tags like <c>, <i>, etc.
-      let cleanText = line
+      const cleanText = line
         .replace(/<\d{2}:\d{2}:\d{2}\.\d{3}>/g, '') // Remove timing tags
         .replace(/<[^>]*>/g, '') // Remove all other tags
         .replace(/\s+/g, ' ') // Normalize whitespace
         .trim();
-      
+
       if (cleanText) {
         textLines.push(cleanText);
       }
     }
-    
+
     // Empty line indicates end of subtitle block
     if (line === '') {
       afterTimestamp = false;
     }
   }
-  
+
   // Write the cleaned text to a .txt file
   const textContent = textLines.join(' ').trim(); // Join with spaces instead of newlines for continuous text
   await fs.writeFile(txtFilePath, textContent, 'utf-8');
-  
+
   return txtFilePath;
 }
 
@@ -77,7 +82,7 @@ export async function getVideoInfo(url: string): Promise<VideoInfo> {
       '--no-download',
       '--no-write-sub',
       '--no-write-auto-sub',
-      url
+      url,
     ]);
 
     let output = '';
@@ -104,7 +109,7 @@ export async function getVideoInfo(url: string): Promise<VideoInfo> {
           title: info.title,
           duration: info.duration,
           uploader: info.uploader,
-          uploadDate: info.upload_date
+          uploadDate: info.upload_date,
         });
       } catch (e) {
         reject(new Error('Failed to parse video info'));
@@ -118,15 +123,21 @@ export async function downloadVideo(url: string, options: DownloadOptions): Prom
   await fs.mkdir(options.outputDir, { recursive: true });
 
   const outputTemplate = path.join(options.outputDir, '%(title)s [%(id)s].%(ext)s');
-  
+
   return new Promise((resolve, reject) => {
     const args = [
       '--ignore-config',
-      '--format', options.audioOnly ? 'bestaudio/best' : (options.quality === 'best' ? 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' : options.quality),
-      '--output', outputTemplate,
+      '--format',
+      options.audioOnly
+        ? 'bestaudio/best'
+        : options.quality === 'best'
+          ? 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+          : options.quality,
+      '--output',
+      outputTemplate,
       '--embed-metadata',
       '--write-info-json',
-      url
+      url,
     ];
 
     if (options.audioOnly) {
@@ -135,18 +146,16 @@ export async function downloadVideo(url: string, options: DownloadOptions): Prom
     }
 
     console.log(chalk.blue(options.audioOnly ? 'Downloading audio...' : 'Downloading video...'));
-    
+
     const ytDlp = spawn('yt-dlp', args);
 
-    let output = '';
     let error = '';
     let downloadedFile = '';
 
     ytDlp.stdout.on('data', (data) => {
       const text = data.toString();
-      output += text;
       console.log(text.trim());
-      
+
       // Try to extract the downloaded filename
       const match = text.match(/\[download\] (.+?) has already been downloaded/);
       if (match) {
@@ -177,46 +186,50 @@ export async function downloadVideo(url: string, options: DownloadOptions): Prom
   });
 }
 
-export async function downloadTranscripts(url: string, outputDir: string, convertToText: boolean = true): Promise<string[]> {
+export async function downloadTranscripts(
+  url: string,
+  outputDir: string,
+  convertToText: boolean = true,
+): Promise<string[]> {
   await fs.mkdir(outputDir, { recursive: true });
 
   const outputTemplate = path.join(outputDir, '%(title)s [%(id)s]');
-  
+
   return new Promise((resolve, reject) => {
     const args = [
       '--ignore-config',
       '--write-sub',
       '--write-auto-sub',
-      '--sub-format', 'vtt',
+      '--sub-format',
+      'vtt',
       '--skip-download',
-      '--output', outputTemplate,
-      url
+      '--output',
+      outputTemplate,
+      url,
     ];
 
     console.log(chalk.blue('Downloading transcripts...'));
-    
+
     const ytDlp = spawn('yt-dlp', args);
 
-    let output = '';
     let error = '';
     const downloadedFiles: string[] = [];
 
     ytDlp.stdout.on('data', (data) => {
       const text = data.toString();
-      output += text;
       console.log(text.trim());
 
       // Extract transcript filenames (both vtt and txt)
       const vttMatches = text.match(/\[info\] Writing video subtitles to: (.+\.vtt)/g);
       const txtMatches = text.match(/\[info\] Writing video subtitles to: (.+\.txt)/g);
-      
+
       if (vttMatches) {
         vttMatches.forEach((match: string) => {
           const filename = match.replace('[info] Writing video subtitles to: ', '');
           downloadedFiles.push(filename);
         });
       }
-      
+
       if (txtMatches) {
         txtMatches.forEach((match: string) => {
           const filename = match.replace('[info] Writing video subtitles to: ', '');
@@ -246,7 +259,11 @@ export async function downloadTranscripts(url: string, outputDir: string, conver
               const txtFile = await convertVttToText(vttFile);
               convertedFiles.push(txtFile);
             } catch (convertError) {
-              console.error(chalk.yellow(`Failed to convert ${path.basename(vttFile)} to text: ${convertError instanceof Error ? convertError.message : 'Unknown error'}`));
+              console.error(
+                chalk.yellow(
+                  `Failed to convert ${path.basename(vttFile)} to text: ${convertError instanceof Error ? convertError.message : 'Unknown error'}`,
+                ),
+              );
               // Keep the VTT file in the list if conversion fails
               convertedFiles.push(vttFile);
             }
@@ -254,7 +271,7 @@ export async function downloadTranscripts(url: string, outputDir: string, conver
             convertedFiles.push(vttFile);
           }
         }
-        resolve([...downloadedFiles, ...convertedFiles.filter(f => f.endsWith('.txt'))]);
+        resolve([...downloadedFiles, ...convertedFiles.filter((f) => f.endsWith('.txt'))]);
       } else {
         resolve(downloadedFiles);
       }

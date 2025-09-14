@@ -22,28 +22,33 @@ Make sure you have the following installed on your system:
 ### Installing Prerequisites
 
 **macOS (with Homebrew):**
+
 ```bash
 brew install yt-dlp ffmpeg
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt update
 sudo apt install yt-dlp ffmpeg
 ```
 
 **Windows:**
+
 - Install yt-dlp: https://github.com/yt-dlp/yt-dlp#installation
 - Install FFmpeg: https://ffmpeg.org/download.html
 
 ## Installation
 
 ### Global Installation
+
 ```bash
 pnpm install -g .
 ```
 
 ### Local Development
+
 ```bash
 pnpm install
 pnpm build
@@ -52,11 +57,13 @@ pnpm build
 ## Usage
 
 ### Basic Download
+
 ```bash
 yt "https://youtube.com/watch?v=VIDEO_ID"
 ```
 
 ### Advanced Options
+
 ```bash
 # Download audio only
 yt "https://youtube.com/watch?v=VIDEO_ID" -a
@@ -90,9 +97,11 @@ yt <url> [options]
 ```
 
 **Arguments:**
+
 - `url` - YouTube video URL
 
 **Options:**
+
 - `-o, --output <dir>` - Output directory (default: ".")
 - `-q, --quality <quality>` - Video quality: "best", "worst", or specific format (default: "best")
 - `-t, --transcript [enabled]` - Control transcript download. See details below.
@@ -173,6 +182,42 @@ node dist/index.js "https://youtube.com/watch?v=VIDEO_ID"
 4. Add tests if applicable
 5. Submit a pull request
 
+### Conventional Commits
+
+Use Conventional Commits for all commits and PR titles:
+
+- Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`.
+- Optional scope: `type(scope): message` (e.g., `fix(download): handle m4a`).
+- Breaking: append `!` (e.g., `feat!: ...`) or add a `BREAKING CHANGE:` footer.
+
+Examples:
+
+- `feat: add --keep-original flag`
+- `fix(ffmpeg): correct CRF default to 18`
+
+## Releasing
+
+### Local Git Hooks
+
+Husky sets up local hooks for commit hygiene:
+
+- `commit-msg`: runs commitlint to enforce Conventional Commits.
+- `pre-commit`: runs `pnpm test`.
+
+Setup once after cloning:
+
+```bash
+pnpm install   # runs `pnpm prepare` → installs Husky hooks
+```
+
+This repo uses semantic-release to automate versioning and changelog generation based on Conventional Commits.
+
+- Conventional Commits: use `feat:`, `fix:`, `chore:`, optional scopes (e.g., `fix(download): ...`). Add `!` or a `BREAKING CHANGE:` footer for major releases.
+- Local dry-run: `pnpm release:dry` to preview the next version and notes.
+- CI: On push to `main`, GitHub Actions runs `pnpm release` to create a tag, update `CHANGELOG.md` and `package.json`, and publish a GitHub Release (no npm publish).
+
+Pull requests run commit message checks to enforce the convention.
+
 ## License
 
 ISC
@@ -182,19 +227,23 @@ ISC
 ### Common Issues
 
 **"yt-dlp not found"**
+
 - Make sure yt-dlp is installed and available in your PATH
 - Try `which yt-dlp` to verify installation
 
 **"ffmpeg not found"**
+
 - Make sure FFmpeg is installed and available in your PATH
 - Try `which ffmpeg` to verify installation
 
 **Download fails**
+
 - Check if the YouTube URL is valid and accessible
 - Some videos may be region-restricted or require authentication
 - Try updating yt-dlp: `pip install --upgrade yt-dlp`
 
 **Compression fails**
+
 - Verify FFmpeg installation
 - Check available disk space
 - Some video formats may not be compatible

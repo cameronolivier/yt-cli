@@ -13,11 +13,13 @@ The current implementation has the `--audio-only` option defined in `src/index.t
 I will update the line that defines the `--audio-only` option to include the `-a` alias.
 
 **Current code:**
+
 ```typescript
   .option('--audio-only', 'Download audio only')
 ```
 
 **New code:**
+
 ```typescript
   .option('-a, --audio-only', 'Download audio only')
 ```

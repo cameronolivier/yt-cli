@@ -28,13 +28,19 @@ I will add a `release` configuration to the `package.json` file. This configurat
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
-      ["@semantic-release/npm", {
-        "npmPublish": false
-      }],
-      ["@semantic-release/git", {
-        "assets": ["package.json", "CHANGELOG.md"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }]
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": ["package.json", "CHANGELOG.md"],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
     ]
   }
 }
@@ -63,13 +69,19 @@ I will create a `.releaserc` file to configure semantic-release.
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
-    ["@semantic-release/npm", {
-      "npmPublish": false
-    }],
-    ["@semantic-release/git", {
-      "assets": ["package.json", "CHANGELOG.md"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-    }]
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["package.json", "CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ]
   ]
 }
 ```
@@ -81,5 +93,7 @@ I will assume that the user will be responsible for setting up the CI environmen
 ## 3. Verification
 
 After the changes are implemented, I will run `pnpm run release --dry-run` to verify that the configuration is correct and that `semantic-release` can determine the next version based on the commit history.
+
+```
 
 ```

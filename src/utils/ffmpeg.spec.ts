@@ -48,19 +48,17 @@ describe('ffmpeg utils', () => {
     (mockSpawn as any).mockReturnValue(proc);
 
     const ffprobeJson = JSON.stringify({
-      streams: [
-        { codec_type: 'audio' },
-        { codec_type: 'video', width: 1920, height: 1080 },
-      ],
+      streams: [{ codec_type: 'audio' }, { codec_type: 'video', width: 1920, height: 1080 }],
       format: { duration: '42.5' },
     });
 
     const promise = getVideoInfo('/tmp/video.mp4');
-    proc.stdout.emit('data', Buffer.from(ffprobeJson));
-    proc.emitClose(0);
+    setTimeout(() => {
+      proc.stdout.emit('data', Buffer.from(ffprobeJson));
+      proc.emitClose(0);
+    }, 0);
 
     const info = await promise;
     expect(info).toEqual({ duration: 42.5, width: 1920, height: 1080, size: 123456 });
   });
 });
-

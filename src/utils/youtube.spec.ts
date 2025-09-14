@@ -48,9 +48,11 @@ describe('youtube utils', () => {
 
     const promise = getVideoInfo('https://youtu.be/abc123');
 
-    // Simulate yt-dlp streaming JSON and exiting successfully
-    proc.stdout.emit('data', Buffer.from(infoJson));
-    proc.emitClose(0);
+    // Emit on next tick to ensure listeners attached
+    setTimeout(() => {
+      proc.stdout.emit('data', Buffer.from(infoJson));
+      proc.emitClose(0);
+    }, 0);
 
     const info = await promise;
     expect(info).toEqual({
@@ -68,20 +70,22 @@ describe('youtube utils', () => {
 
     const promise = downloadTranscripts('https://youtu.be/xyz', '.tmp-test', false);
 
-    // Emit lines that youtube.ts matches for VTT and TXT
-    proc.stdout.emit(
-      'data',
-      Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en.vtt\n')
-    );
-    proc.stdout.emit(
-      'data',
-      Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en-auto.vtt\n')
-    );
-    proc.stdout.emit(
-      'data',
-      Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en.txt\n')
-    );
-    proc.emitClose(0);
+    // Emit lines on next tick
+    setTimeout(() => {
+      proc.stdout.emit(
+        'data',
+        Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en.vtt\n'),
+      );
+      proc.stdout.emit(
+        'data',
+        Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en-auto.vtt\n'),
+      );
+      proc.stdout.emit(
+        'data',
+        Buffer.from('[info] Writing video subtitles to: .tmp-test/Video [id].en.txt\n'),
+      );
+      proc.emitClose(0);
+    }, 0);
 
     const files = await promise;
     expect(files).toContain('.tmp-test/Video [id].en.vtt');
