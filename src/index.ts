@@ -3,14 +3,14 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { downloadVideo } from './commands/download';
-import { version } from '../package.json';
+import packageJson from '../package.json';
 
 const program = new Command();
 
 program
   .name('yt')
   .description('CLI tool for downloading YouTube videos and transcripts with compression')
-  .version(version);
+  .version(packageJson.version);
 
 program
   .argument('<url>', 'YouTube video URL')
@@ -22,6 +22,12 @@ program
   .option('--no-compression', 'Skip video compression')
   .option('--keep-original', 'Keep original downloaded file after compression')
   .action(async (url: string, options) => {
+    const youtubeUrlRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    if (!youtubeUrlRegex.test(url)) {
+      console.error(chalk.red('Error: Invalid YouTube URL provided.'));
+      process.exit(1);
+    }
+
     try {
       await downloadVideo(url, options);
     } catch (error) {
