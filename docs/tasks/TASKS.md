@@ -1,4 +1,5 @@
 # TASKS
 
 - [ ] 0001: implement semantic auto-versioning
-- [ ] 0002: add command alias for --audio-only as `-a`
+- [x] 0002: add command alias for --audio-only as `-a`
+- [ ] 0003: bug - error when downloading audio
