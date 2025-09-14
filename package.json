@@ -18,7 +18,8 @@
     "format:check": "prettier --check .",
     "prepare": "husky install",
     "release": "semantic-release",
-    "release:dry": "semantic-release --dry-run"
+    "release:dry": "semantic-release --dry-run",
+    "release:dry:local": "LOCAL_DRY_RUN=1 semantic-release --dry-run --no-ci --repository-url . -e ./release.config.cjs"
   },
   "keywords": [
     "youtube",
