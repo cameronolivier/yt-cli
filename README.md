@@ -1,5 +1,10 @@
 # @olvrcc/yt-cli
 
+[![npm version](https://badge.fury.io/js/@olvrcc%2Fyt-cli.svg)](https://badge.fury.io/js/@olvrcc%2Fyt-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@olvrcc/yt-cli.svg)](https://www.npmjs.com/package/@olvrcc/yt-cli)
+[![GitHub release](https://img.shields.io/github/release/cameronolivier/yt-cli.svg)](https://github.com/cameronolivier/yt-cli/releases)
+[![License](https://img.shields.io/npm/l/@olvrcc/yt-cli.svg)](https://github.com/cameronolivier/yt-cli/blob/main/LICENSE)
+
 A TypeScript CLI tool for downloading YouTube videos and transcripts with smart compression.
 
 ## Features
@@ -41,25 +46,53 @@ sudo apt install yt-dlp ffmpeg
 
 ## Installation
 
-### Global Installation
+### Global Installation (Recommended)
+
+Install the CLI globally using your preferred package manager:
+
+**Using npm:**
 
 ```bash
 npm install -g @olvrcc/yt-cli
 ```
 
-### Local Development
-
-Install the package locally for development:
+**Using pnpm:**
 
 ```bash
-pnpm install -g .
+pnpm add -g @olvrcc/yt-cli
 ```
 
-Or clone and build locally:
+**Using yarn:**
 
 ```bash
+yarn global add @olvrcc/yt-cli
+```
+
+### One-time Usage (No Installation)
+
+Run the CLI without installing using npx:
+
+```bash
+npx @olvrcc/yt-cli "https://youtube.com/watch?v=VIDEO_ID"
+```
+
+### Local Development
+
+For contributors and developers:
+
+```bash
+# Clone the repository
+git clone https://github.com/cameronolivier/yt-cli.git
+cd yt-cli
+
+# Install dependencies
 pnpm install
+
+# Build the project
 pnpm build
+
+# Link globally for development
+pnpm link --global
 ```
 
 ## Usage
@@ -91,6 +124,9 @@ yt "https://youtube.com/watch?v=VIDEO_ID" -a --transcript
 # Explicitly set transcript preference
 yt "https://youtube.com/watch?v=VIDEO_ID" --transcript=false
 
+# Download transcripts only (no video or audio)
+yt "https://youtube.com/watch?v=VIDEO_ID" --no-video
+
 # Skip compression
 yt "https://youtube.com/watch?v=VIDEO_ID" --no-compression
 
@@ -114,6 +150,7 @@ yt <url> [options]
 - `-q, --quality <quality>` - Video quality: "best", "worst", or specific format (default: "best")
 - `-t, --transcript [enabled]` - Control transcript download. See details below.
 - `-a, --audio-only` - Download audio only.
+- `--no-video` - Download transcripts only (no video or audio).
 - `--convert-subs` - Convert subtitles to plain text format (default: true).
 - `--no-compression` - Skip video compression.
 - `--keep-original` - Keep original downloaded file after compression.
@@ -224,7 +261,7 @@ This repo uses semantic-release to automate versioning and changelog generation 
 - Dry-run previews:
   - `pnpm release:dry` — CI-like preview (requires network)
   - `pnpm release:dry:local` — local preview that disables the GitHub plugin and CI checks; still requires access to the repository remote for branch expansion
-- CI: On push to `main`, GitHub Actions runs `pnpm release` to create a tag, update `CHANGELOG.md` and `package.json`, and publish a GitHub Release (no npm publish).
+- CI: On push to `main`, GitHub Actions runs `pnpm release` to create a tag, update `CHANGELOG.md` and `package.json`, and publish both a GitHub Release and npm package.
 
 Note: semantic-release performs a `git ls-remote` during branch expansion even in dry-run. For a truly offline simulation you would need to point `origin` to a local bare clone or provide a local `repositoryUrl` in config; most users should simply run the dry-run with network access.
 
