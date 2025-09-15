@@ -1,4 +1,4 @@
-# yt-cli
+# @olvrcc/yt-cli
 
 A TypeScript CLI tool for downloading YouTube videos and transcripts with smart compression.
 
@@ -15,7 +15,7 @@ A TypeScript CLI tool for downloading YouTube videos and transcripts with smart 
 
 Make sure you have the following installed on your system:
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
+- [Node.js](https://nodejs.org/) (v18 or higher) - This package is ESM-only
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - for downloading YouTube content
 - [FFmpeg](https://ffmpeg.org/) - for video compression
 
@@ -44,10 +44,18 @@ sudo apt install yt-dlp ffmpeg
 ### Global Installation
 
 ```bash
-pnpm install -g .
+npm install -g @olvrcc/yt-cli
 ```
 
 ### Local Development
+
+Install the package locally for development:
+
+```bash
+pnpm install -g .
+```
+
+Or clone and build locally:
 
 ```bash
 pnpm install

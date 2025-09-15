@@ -9,7 +9,7 @@ vi.mock('child_process', () => {
 });
 
 // Defer imports until after mocks
-import { getVideoInfo, downloadTranscripts } from './youtube';
+import { getVideoInfo, downloadTranscripts } from './youtube.js';
 import { spawn as mockSpawn } from 'child_process';
 
 class MockProc {

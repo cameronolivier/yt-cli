@@ -1,14 +1,27 @@
 {
-  "name": "yt-cli",
+  "name": "@olvrcc/yt-cli",
   "version": "1.0.0",
   "description": "TypeScript CLI tool for downloading YouTube videos and transcripts with compression",
+  "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "yt": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
+    "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -17,6 +30,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky install",
+    "prepublishOnly": "pnpm build",
     "release": "semantic-release",
     "release:dry": "semantic-release --dry-run",
     "release:dry:local": "LOCAL_DRY_RUN=1 semantic-release --dry-run --no-ci -e ./release.config.cjs"
@@ -38,25 +52,26 @@
     "ora": "^8.2.0"
   },
   "devDependencies": {
-    "@types/node": "^24.4.0",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.3.3",
-    "husky": "^9.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.2.1",
     "@semantic-release/npm": "^12.0.0",
     "@semantic-release/release-notes-generator": "^14.0.1",
+    "@types/node": "^24.4.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.0",
+    "prettier": "^3.3.3",
     "semantic-release": "^24.1.0",
-    "vitest": "^1.6.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^1.6.0"
   }
 }

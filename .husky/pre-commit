@@ -1,5 +1,2 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run fast checks before commit
 pnpm -s lint && pnpm -s format:check && pnpm -s test

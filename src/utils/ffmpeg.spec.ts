@@ -10,7 +10,7 @@ vi.mock('child_process', () => {
 
 import { spawn as mockSpawn } from 'child_process';
 import * as fsModule from 'fs';
-import { generateCompressedFilename, getVideoInfo } from './ffmpeg';
+import { generateCompressedFilename, getVideoInfo } from './ffmpeg.js';
 
 class MockProc {
   stdout = new EventEmitter();

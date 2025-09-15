@@ -6,8 +6,8 @@ import {
   getVideoInfo,
   downloadVideo as downloadVideoFile,
   downloadTranscripts,
-} from '../utils/youtube';
-import { compressVideo, getVideoInfo as getLocalVideoInfo } from '../utils/ffmpeg';
+} from '../utils/youtube.js';
+import { compressVideo, getVideoInfo as getLocalVideoInfo } from '../utils/ffmpeg.js';
 
 interface CommandOptions {
   output: string;

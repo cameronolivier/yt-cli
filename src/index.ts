@@ -2,8 +2,8 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { downloadVideo } from './commands/download';
-import packageJson from '../package.json';
+import { downloadVideo } from './commands/download.js';
+import packageJson from '../package.json' with { type: 'json' };
 
 const program = new Command();
 
