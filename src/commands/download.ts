@@ -14,6 +14,7 @@ interface CommandOptions {
   quality: string;
   transcript: boolean;
   audioOnly: boolean;
+  noVideo: boolean;
   convertSubs: boolean;
   compression: boolean;
   keepOriginal: boolean;
@@ -42,35 +43,37 @@ export async function downloadVideo(url: string, options: CommandOptions): Promi
     let videoFilePath: string | undefined;
     let transcriptFiles: string[] = [];
 
-    // Download video or audio
-    spinner.start(options.audioOnly ? 'Downloading audio...' : 'Downloading video...');
-    try {
-      await downloadVideoFile(url, {
-        outputDir,
-        quality: options.quality,
-        downloadTranscript: false, // We handle transcripts separately
-        audioOnly: options.audioOnly,
-      });
+    // Download video or audio (skip if --no-video is used)
+    if (!options.noVideo) {
+      spinner.start(options.audioOnly ? 'Downloading audio...' : 'Downloading video...');
+      try {
+        await downloadVideoFile(url, {
+          outputDir,
+          quality: options.quality,
+          downloadTranscript: false, // We handle transcripts separately
+          audioOnly: options.audioOnly,
+        });
 
-      // Find the actual downloaded file
-      videoFilePath = await findDownloadedVideoFile(
-        outputDir,
-        videoInfo.title,
-        videoInfo.id,
-        options.audioOnly,
-      );
-      if (videoFilePath) {
-        spinner.succeed(
-          options.audioOnly
-            ? 'Audio downloaded'
-            : `Video downloaded: ${chalk.green(path.basename(videoFilePath))}`,
+        // Find the actual downloaded file
+        videoFilePath = await findDownloadedVideoFile(
+          outputDir,
+          videoInfo.title,
+          videoInfo.id,
+          options.audioOnly,
         );
-      } else {
-        spinner.warn('Download completed but file path could not be determined');
+        if (videoFilePath) {
+          spinner.succeed(
+            options.audioOnly
+              ? 'Audio downloaded'
+              : `Video downloaded: ${chalk.green(path.basename(videoFilePath))}`,
+          );
+        } else {
+          spinner.warn('Download completed but file path could not be determined');
+        }
+      } catch (error) {
+        spinner.fail(options.audioOnly ? 'Audio download failed' : 'Video download failed');
+        throw error;
       }
-    } catch (error) {
-      spinner.fail(options.audioOnly ? 'Audio download failed' : 'Video download failed');
-      throw error;
     }
 
     // Download transcripts if requested
@@ -101,7 +104,7 @@ export async function downloadVideo(url: string, options: CommandOptions): Promi
     }
 
     // Compress video if requested and we have a video file
-    if (!options.audioOnly && options.compression && videoFilePath) {
+    if (!options.noVideo && !options.audioOnly && options.compression && videoFilePath) {
       spinner.start('Compressing video...');
       try {
         const originalInfo = await getLocalVideoInfo(videoFilePath);
