@@ -214,9 +214,11 @@ This repo uses semantic-release to automate versioning and changelog generation 
 
 - Conventional Commits: use `feat:`, `fix:`, `chore:`, optional scopes (e.g., `fix(download): ...`). Add `!` or a `BREAKING CHANGE:` footer for major releases.
 - Dry-run previews:
-  - `pnpm release:dry` — CI-like preview
-  - `pnpm release:dry:local` — local-only preview (avoids GitHub/network)
+  - `pnpm release:dry` — CI-like preview (requires network)
+  - `pnpm release:dry:local` — local preview that disables the GitHub plugin and CI checks; still requires access to the repository remote for branch expansion
 - CI: On push to `main`, GitHub Actions runs `pnpm release` to create a tag, update `CHANGELOG.md` and `package.json`, and publish a GitHub Release (no npm publish).
+
+Note: semantic-release performs a `git ls-remote` during branch expansion even in dry-run. For a truly offline simulation you would need to point `origin` to a local bare clone or provide a local `repositoryUrl` in config; most users should simply run the dry-run with network access.
 
 Pull requests run commit message checks to enforce the convention.
 
